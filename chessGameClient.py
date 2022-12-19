@@ -102,10 +102,12 @@ while not board.is_game_over():
                 if selected_square is not None and square != selected_square:
                     print(f'Player selects {dict1[column + 1]}{row + 1}')
                     move = chess.Move(selected_square, square)
-                    # if move in board.legal_moves:
-                    board.push(move)
-                    selected_square = None
-                    print(f'Player plays {move}')
+                    if board.is_legal(chess.Move.from_uci(str(move))):  # move is not legal most of the time
+                        board.push(move)
+                        selected_square = None
+                        print(f'Player plays {move}')
+                    else:
+                        print('Move is illegal')
 
 
 
