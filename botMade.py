@@ -64,10 +64,10 @@ def make_move(board):
 # Initialize a board
 board = chess.Board()
 
+dict1 = {1: 'a', 2: 'b', 3: 'c', 4: 'd', 5: 'e', 6: 'f', 7: 'g', 8: 'h'}
+
 # Initialize variables for tracking the player's move
 selected_square = None
-
-dict1 = {1: 'a', 2: 'b', 3: 'c', 4: 'd', 5: 'e', 6: 'f', 7: 'g', 8: 'h'}
 
 while not board.is_game_over():
     # Draw the board
@@ -87,7 +87,7 @@ while not board.is_game_over():
                 square = column + 8 * row
                 piece = board.piece_at(square)
                 # print(square)
-                if piece and piece.color == chess.BLACK:
+                if piece and piece.color == chess.WHITE:
                     selected_square = square
                     print(f'Player selects {dict1[column + 1]}{row + 1}')
                 else:
@@ -106,20 +106,8 @@ while not board.is_game_over():
                     board.push(move)
                     selected_square = None
                     print(f'Player plays {move}')
-
-
-
     else:
-
-        # It's the bot's turn, so get the move from the bot
-
-        # finalMove = make_move(board)
-        #
-        # print(f'Bot plays {finalMove}')
-        #
-        # board.push(finalMove)
-        print('Bot plays')
-        board.push(chess.Move.from_uci(input('Enter move: ')))
-
-# Print the final board position
-print(board)
+        # It's the computer's turn, so make a move
+        move = make_move(board)
+        board.push(move)
+        print(f'Computer plays {move}')
