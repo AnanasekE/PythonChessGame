@@ -16,9 +16,13 @@ piece_images = {}
 for color in ("black", "white"):
     for symbol in ("p", "n", "b", "r", "q", "k"):
         filename = f"{color}_{symbol}.png"
-        image = pygame.image.load('./assets/'+filename)
+        image = pygame.image.load('./assets/' + filename)
         piece_images[symbol] = image
-        piece_images[symbol.upper()] = image
+        if color == "black":
+            piece_images[symbol.upper()] = image
+
+print("Welcome to Chess!")
+print('piece_images', piece_images)
 
 
 # Define a function to draw the board and pieces on the Pygame window
@@ -63,37 +67,59 @@ board = chess.Board()
 # Initialize variables for tracking the player's move
 selected_square = None
 
+dict1 = {1: 'a', 2: 'b', 3: 'c', 4: 'd', 5: 'e', 6: 'f', 7: 'g', 8: 'h'}
+
 while not board.is_game_over():
     # Draw the board
     draw_board(board)
 
     # Check whose turn it is
     if board.turn:
-        # It's the player's turn, so handle the Pygame events
+        # It's the player's turn, so get the move from the user
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
-                pygame.quit()
                 sys.exit()
             elif event.type == pygame.MOUSEBUTTONDOWN:
-                mouse_x, mouse_y = pygame.mouse.get_pos()
-                col = mouse_x // 75
-                row = mouse_y // 75
-                index = 8 * row + col
-                if selected_square is None:
-                    piece = board.piece_at(index)
-                    if piece and piece.color == chess.WHITE:
-                        # Select the square
-                        selected_square = index
+                # Check if the player clicked on a piece
+                x, y = event.pos
+                column = x // 75
+                row = y // 75
+                square = column + 8 * row
+                piece = board.piece_at(square)
+                # print(square)
+                if piece and piece.color == chess.BLACK:
+                    selected_square = square
+                    print(f'Player selects {dict1[column + 1]}{row + 1}')
                 else:
-                    # Make the move
-                    move = chess.Move(selected_square, index)
-                    if move in board.legal_moves:
-                        board.push(move)
-                        selected_square = None
-                    else:
-                        # It's the computer's turn, so use the chess engine to make a move
-                        move = make_move(board)
-                        board.push(move)
-draw_board(board)
-pygame.time.wait(3000)
-pygame.quit()
+                    selected_square = None
+                    print('Player selects empty square')
+            elif event.type == pygame.MOUSEBUTTONUP:
+                # Check if the player released the mouse button on a valid destination square
+                x, y = event.pos
+                column = x // 75
+                row = y // 75
+                square = column + 8 * row
+                if selected_square is not None and square != selected_square:
+                    print(f'Player selects {dict1[column + 1]}{row + 1}')
+                    move = chess.Move(selected_square, square)
+                    # if move in board.legal_moves:
+                    board.push(move)
+                    selected_square = None
+                    print(f'Player plays {move}')
+
+
+
+    else:
+
+        # It's the bot's turn, so get the move from the bot
+
+        finalMove = make_move(board)
+
+        print(f'Bot plays {finalMove}')
+
+        board.push(finalMove)
+        print('Bot plays')
+        # board.push(chess.Move.from_uci(input('Enter move: ')))
+
+# Print the final board position
+print(board)
